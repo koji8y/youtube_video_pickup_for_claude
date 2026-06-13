@@ -1,0 +1,38 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: librechat-mongodb
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    command: mongod --noauth
+
+  mcp-youtube:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: mcp-youtube
+    restart: always
+    expose:
+      - "8080"
+
+  librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    container_name: librechat
+    ports:
+      - "3080:3080"
+    depends_on:
+      - mongodb
+      - mcp-youtube
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml
+      - librechat_images:/app/client/public/images
+      - librechat_logs:/app/api/logs
+
+volumes:
+  mongodb_data:
+  librechat_images:
+  librechat_logs:

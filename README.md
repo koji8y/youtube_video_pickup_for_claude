@@ -47,12 +47,65 @@ MCP ツール名: `get_youtube_transcript`
 - 字幕（自動生成含む）が存在しない動画はトランスクリプトを取得できません
 - 字幕が無効に設定されている動画も同様です
 
+## LibreChat（ローカル Web UI）で使う
+
+Docker Compose でローカルに LibreChat を立ち上げ、Web チャット上で YouTube 要約を使う方法。
+
+### 1. 環境変数ファイルを用意する
+
+```bash
+cp .env.example .env
+```
+
+`.env` を編集し、少なくとも以下を設定する:
+
+| 変数 | 説明 |
+|------|------|
+| `ANTHROPIC_API_KEY` | Anthropic API キー |
+| `JWT_SECRET` | 任意の長いランダム文字列 |
+| `JWT_REFRESH_SECRET` | 別の任意の長いランダム文字列 |
+
+### 2. 起動
+
+```bash
+docker compose up -d
+```
+
+初回はイメージのビルド・ pull が走るため数分かかる。
+
+### 3. アクセス
+
+ブラウザで `http://localhost:3080` を開く。アカウントを作成してログインすると、Claude モデルと `youtube-transcript` MCP ツールが使える状態になっている。
+
+### サービス構成
+
+```
+[ブラウザ :3080]
+      ↓
+[LibreChat コンテナ]  →  Anthropic API
+      ↓ SSE (MCP)
+[mcp-youtube コンテナ :8080]
+      ↓
+[youtube-transcript-api]
+```
+
+### 停止
+
+```bash
+docker compose down
+```
+
+---
+
 ## 開発
 
 ```bash
 # テスト実行
 uv run pytest
 
-# サーバー単体起動（デバッグ用）
+# stdio モードで起動（Claude Code 用）
 uv run python server.py
+
+# SSE モードで起動（Docker/手動確認用）
+uv run python server.py --transport sse --port 8080
 ```

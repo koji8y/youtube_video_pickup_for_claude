@@ -1,0 +1,17 @@
+version: 1.2
+cache: true
+
+endpoints:
+  anthropic:
+    apiKey: "${ANTHROPIC_API_KEY}"
+    models:
+      default:
+        - claude-sonnet-4-6
+        - claude-opus-4-8
+        - claude-haiku-4-5-20251001
+      fetch: false
+
+mcpServers:
+  youtube-transcript:
+    url: http://mcp-youtube:8080/sse
+    type: sse

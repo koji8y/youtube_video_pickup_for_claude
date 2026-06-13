@@ -1,5 +1,11 @@
-"""YouTube transcript MCP server."""
+"""YouTube transcript MCP server.
 
+起動方法:
+  stdio (Claude Code 用): uv run python server.py
+  SSE   (Docker/Web 用): uv run python server.py --transport sse [--port 8080]
+"""
+
+import argparse
 import re
 
 import mcp.server.stdio
@@ -120,7 +126,39 @@ async def main() -> None:
         )
 
 
+def _run_sse(port: int) -> None:
+    from mcp.server.sse import SseServerTransport
+    from starlette.applications import Starlette
+    from starlette.requests import Request
+    from starlette.routing import Mount, Route
+    import uvicorn
+
+    sse_transport = SseServerTransport("/messages/")
+
+    async def handle_sse(request: Request) -> None:
+        async with sse_transport.connect_sse(
+            request.scope, request.receive, request._send
+        ) as streams:
+            await app.run(streams[0], streams[1], app.create_initialization_options())
+
+    starlette_app = Starlette(
+        routes=[
+            Route("/sse", endpoint=handle_sse),
+            Mount("/messages/", app=sse_transport.handle_post_message),
+        ]
+    )
+    uvicorn.run(starlette_app, host="0.0.0.0", port=port)
+
+
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
+    parser.add_argument("--port", type=int, default=8080)
+    args = parser.parse_args()
+
+    if args.transport == "sse":
+        _run_sse(args.port)
+    else:
+        asyncio.run(main())
