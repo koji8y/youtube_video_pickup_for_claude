@@ -1,15 +1,18 @@
-version: 1.2
+version: "1.2"
 cache: true
 
 endpoints:
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
+    systemPrompt: "ユーザーが YouTube の URL を含むメッセージを送った場合は、必ず get_youtube_transcript ツールを呼び出してトランスクリプトを取得し、その内容を要約すること。"
     models:
-      default:
-        - claude-sonnet-4-6
-        - claude-opus-4-8
-        - claude-haiku-4-5-20251001
-      fetch: false
+      - claude-sonnet-4-6
+      - claude-opus-4-8
+      - claude-haiku-4-5-20251001
+
+mcpSettings:
+  allowedDomains:
+    - http://mcp-youtube:8080
 
 mcpServers:
   youtube-transcript:
