@@ -1,6 +1,9 @@
 version: "1.2"
 cache: true
 
+interface:
+  agents: false
+
 endpoints:
   anthropic:
     apiKey: "${ANTHROPIC_API_KEY}"
