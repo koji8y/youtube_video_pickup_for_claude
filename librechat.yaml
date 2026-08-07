@@ -46,6 +46,7 @@ modelSpecs:
       preset:
         endpoint: anthropic
         model: claude-sonnet-5
+        thinking: false
     - name: claude-opus-4-8
       label: "Claude Opus 4.8"
       preset:
