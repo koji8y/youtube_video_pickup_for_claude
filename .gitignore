@@ -12,3 +12,4 @@ wheels/
 .tool-versions
 tmp/
 .env
+.claude
