@@ -9,9 +9,61 @@ endpoints:
     apiKey: "${ANTHROPIC_API_KEY}"
     systemPrompt: "ユーザーが YouTube の URL を含むメッセージを送った場合は、必ず get_youtube_transcript ツールを呼び出してトランスクリプトを取得し、その内容を要約すること。"
     models:
+      - claude-fable-5
+      - claude-opus-5
+      - claude-sonnet-5
       - claude-sonnet-4-6
       - claude-opus-4-8
       - claude-haiku-4-5-20251001
+
+# LibreChat has an unresolved bug where Extended Thinking combined with MCP
+# tool calls drops the thinking block content on the follow-up request,
+# causing Anthropic to reject it with "content.0.thinking.thinking: Field
+# required" (https://github.com/danny-avila/LibreChat/issues/12717). Since
+# this app always triggers the youtube-transcript tool, thinking is pinned
+# off here to avoid it on models that allow disabling it.
+#
+# The Claude 5 generation (fable-5/opus-5/sonnet-5) uses adaptive thinking
+# instead and is on by default with no config needed; Claude Fable 5 flatly
+# rejects thinking:{type:"disabled"} with a 400, so `thinking: false` is
+# deliberately omitted for these three models.
+modelSpecs:
+  enforce: true
+  prioritize: true
+  list:
+    - name: claude-fable-5
+      label: "Claude Fable 5"
+      preset:
+        endpoint: anthropic
+        model: claude-fable-5
+    - name: claude-opus-5
+      label: "Claude Opus 5"
+      preset:
+        endpoint: anthropic
+        model: claude-opus-5
+    - name: claude-sonnet-5
+      label: "Claude Sonnet 5"
+      preset:
+        endpoint: anthropic
+        model: claude-sonnet-5
+    - name: claude-opus-4-8
+      label: "Claude Opus 4.8"
+      preset:
+        endpoint: anthropic
+        model: claude-opus-4-8
+        thinking: false
+    - name: claude-sonnet-4-6
+      label: "Claude Sonnet 4.6"
+      preset:
+        endpoint: anthropic
+        model: claude-sonnet-4-6
+        thinking: false
+    - name: claude-haiku-4-5-20251001
+      label: "Claude Haiku 4.5"
+      preset:
+        endpoint: anthropic
+        model: claude-haiku-4-5-20251001
+        thinking: false
 
 mcpSettings:
   allowedDomains:
