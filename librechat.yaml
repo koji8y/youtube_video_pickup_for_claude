@@ -28,6 +28,12 @@ endpoints:
 # instead and is on by default with no config needed; Claude Fable 5 flatly
 # rejects thinking:{type:"disabled"} with a 400, so `thinking: false` is
 # deliberately omitted for these three models.
+#
+# LibreChat v0.8.7's built-in token map has no entry for claude-opus-5-5 /
+# claude-opus-5 / claude-sonnet-5, so they match the generic "claude-" key
+# (100K). Subtracting the 128K max output leaves nothing and the context
+# falls back to 1024 tokens ("empty_messages"). The real limits (1M / 128K)
+# are therefore set explicitly on those presets.
 modelSpecs:
   enforce: true
   prioritize: true
@@ -47,16 +53,22 @@ modelSpecs:
       preset:
         endpoint: anthropic
         model: claude-opus-5-5
+        maxContextTokens: 1000000
+        maxOutputTokens: 128000
     - name: claude-opus-5
       label: "Claude Opus 5"
       preset:
         endpoint: anthropic
         model: claude-opus-5
+        maxContextTokens: 1000000
+        maxOutputTokens: 128000
     - name: claude-sonnet-5
       label: "Claude Sonnet 5"
       preset:
         endpoint: anthropic
         model: claude-sonnet-5
+        maxContextTokens: 1000000
+        maxOutputTokens: 128000
         thinking: false
     - name: claude-opus-4-8
       label: "Claude Opus 4.8"
