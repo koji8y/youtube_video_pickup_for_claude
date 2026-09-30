@@ -10,6 +10,7 @@ endpoints:
     systemPrompt: "ユーザーが YouTube の URL を含むメッセージを送った場合は、必ず get_youtube_transcript ツールを呼び出してトランスクリプトを取得し、その内容を要約すること。"
     models:
       - claude-fable-5
+      - claude-opus-5-5
       - claude-opus-5
       - claude-sonnet-5
       - claude-sonnet-4-6
@@ -31,11 +32,21 @@ modelSpecs:
   enforce: true
   prioritize: true
   list:
+    - name: claude-fable-5-1
+      label: "Claude Fable 5.1"
+      preset:
+        endpoint: anthropic
+        model: claude-fable-5-1
     - name: claude-fable-5
       label: "Claude Fable 5"
       preset:
         endpoint: anthropic
         model: claude-fable-5
+    - name: claude-opus-5-5
+      label: "Claude Opus 5.5"
+      preset:
+        endpoint: anthropic
+        model: claude-opus-5-5
     - name: claude-opus-5
       label: "Claude Opus 5"
       preset:
